@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Lesen & Verstehen – Lese-App für Vishwa · @ Joschy -->
+<!-- Lesen & Verstehen – Lese-App für Kinder · @ Joschy -->
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -63,6 +63,30 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .card .nr { position: absolute; top: 8px; left: 10px; font-size: 13px; color: #B5AC9C; }
 .foot { text-align: center; padding: 0 0 10px; }
 .foot button { color: var(--ink-soft); font-size: 14px; text-decoration: underline; opacity: .6; }
+.foot .by { color: var(--ink-soft); font-size: 13px; opacity: .45; margin-left: 14px; }
+.home-head h1 { cursor: pointer; }
+
+/* ── Profil ── */
+#profil { position: fixed; inset: 0; z-index: 35; display: none; overflow-y: auto; background: var(--bg); }
+#profil.on { display: block; }
+.pf { max-width: 980px; margin: 0 auto; padding: 22px 36px 40px; display: flex; flex-direction: column; gap: 16px; }
+.pf-head { display: flex; align-items: center; gap: 16px; }
+.pf-head .big { font-size: 58px; line-height: 1; }
+.pf-head h1 { margin: 0; font-size: 42px; font-weight: 900; letter-spacing: -0.5px; }
+.pf-head .sub { color: var(--ink-soft); font-size: 19px; margin-top: 2px; }
+.pf-card { background: var(--paper); border: 2px solid var(--line); border-radius: var(--radius); padding: 20px 26px; box-shadow: 0 3px 0 var(--line); }
+.pf-card label { display: block; font-size: 25px; font-weight: 900; margin-bottom: 12px; }
+.pf-card label .n { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 20px; margin-right: 10px; vertical-align: 2px; }
+#pfName { width: 100%; font-family: "Andika", sans-serif; font-weight: 700; font-size: 32px; color: var(--ink); background: #fff; border: 3px solid var(--line); border-radius: 18px; padding: 14px 20px; outline: none; user-select: text; -webkit-user-select: text; }
+#pfName:focus { border-color: var(--teal); box-shadow: 0 0 0 4px var(--teal-soft); }
+#pfName::placeholder { color: #C2B9A8; }
+.ages { display: flex; gap: 12px; }
+.age { flex: 1; height: 84px; border-radius: 20px; background: #fff; border: 3px solid var(--line); box-shadow: 0 3px 0 var(--line); font-size: 36px; font-weight: 900; transition: transform .1s, background .2s, border-color .2s; }
+.age:active { transform: scale(.95); }
+.age.on { background: var(--teal); border-color: var(--teal); color: #fff; box-shadow: 0 4px 0 #0E5656; }
+.pf-hint { color: var(--ink-soft); font-size: 17px; margin-top: 10px; }
+.pf-btns { display: flex; gap: 14px; justify-content: flex-end; align-items: center; }
+.pf-btns .btn { font-size: 26px; padding: 18px 40px; }
 
 /* ── Lesen ── */
 .bar { display: flex; align-items: center; gap: 14px; padding: 12px 24px; }
@@ -234,7 +258,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   <div class="home-head">
     <button class="me" id="meBtn" aria-label="Mein Held"></button>
     <div>
-      <h1>Hallo Vishva! 📚</h1>
+      <h1 id="hello" role="button" title="Profil ändern">Hallo! 📚</h1>
       <div class="sub">Lies genau und sammle Münzen für deinen Helden.</div>
     </div>
     <div class="head-right">
@@ -246,7 +270,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   </div>
   <div class="tabs" id="tabs"></div>
   <div class="grid" id="grid"></div>
-  <div class="foot"><button id="reset">Fortschritt zurücksetzen</button></div>
+  <div class="foot"><button id="reset">Fortschritt zurücksetzen</button><span class="by">@ Joschy</span></div>
 </section>
 
 <section class="screen" id="read">
@@ -286,6 +310,25 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   </div>
 </section>
 
+<div id="profil">
+  <div class="pf">
+    <div class="pf-head"><span class="big">👋</span><div><h1 id="pfTitle">Willkommen!</h1><div class="sub" id="pfSub">Schön, dass du da bist! Erzähl uns kurz etwas über dich.</div></div></div>
+    <div class="pf-card">
+      <label for="pfName"><span class="n">1</span>Wie heißt du?</label>
+      <input id="pfName" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="done" placeholder="Dein Name">
+    </div>
+    <div class="pf-card">
+      <label><span class="n">2</span>Wie alt bist du?</label>
+      <div class="ages" id="pfAges"></div>
+      <div class="pf-hint" id="pfHint">Danach suchen wir passende Texte für dich aus.</div>
+    </div>
+    <div class="pf-btns">
+      <button class="btn light" id="pfCancel">Abbrechen</button>
+      <button class="btn" id="pfOk" disabled>Los geht's! 🚀</button>
+    </div>
+  </div>
+</div>
+
 <div id="party"><canvas id="fw"></canvas><div class="pbox" id="pbox"></div></div>
 
 <script src="content.js"></script>
@@ -306,6 +349,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
   var store = load();
+  var hadOld = !!(store.stars && Object.keys(store.stars).length) || store.coins !== undefined;
   store.stars = store.stars || {};
   store.stufe = store.stufe || 1;
   store.size = store.size || 27;
@@ -396,8 +440,49 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   function owns(id) { var it = A.BY[id]; return !it || it.price === 0 || store.owned.indexOf(id) >= 0; }
   function heroSvg(extraEq, opt) { var e = {}; for (var k in store.equip) e[k] = store.equip[k]; if (extraEq) for (var k2 in extraEq) e[k2] = extraEq[k2]; return A.render(e, opt); }
 
+  // ── Profil ──
+  function pname() { return store.profile && store.profile.name ? store.profile.name : ""; }
+  var pfAge = null, pfEdit = false;
+  (function () { var h = ""; for (var a = 6; a <= 12; a++) h += '<button class="age" data-a="' + a + '">' + a + "</button>"; $("pfAges").innerHTML = h; })();
+  function pfCheck() {
+    var ok = $("pfName").value.trim().length > 0 && pfAge !== null;
+    $("pfOk").disabled = !ok;
+    var bs = document.querySelectorAll("#pfAges .age"); for (var i = 0; i < bs.length; i++) bs[i].classList.toggle("on", +bs[i].dataset.a === pfAge);
+  }
+  function openProfile(edit) {
+    pfEdit = !!edit;
+    var p = store.profile || {};
+    $("pfTitle").textContent = pfEdit ? "Mein Profil" : "Willkommen!";
+    $("pfSub").textContent = pfEdit ? "Hier kannst du deinen Namen und dein Alter ändern." : "Schön, dass du da bist! Erzähl uns kurz etwas über dich.";
+    $("pfName").value = p.name || (!pfEdit && hadOld ? "Vishva" : "");
+    pfAge = p.age || null;
+    $("pfCancel").style.display = pfEdit ? "" : "none";
+    $("pfOk").innerHTML = pfEdit ? "Speichern ✓" : "Los geht's! 🚀";
+    $("profil").classList.add("on"); $("profil").scrollTop = 0;
+    pfCheck();
+  }
+  function closeProfile() { $("profil").classList.remove("on"); $("pfName").blur(); }
+  $("pfName").addEventListener("input", pfCheck);
+  $("pfName").addEventListener("focus", function () {
+    // Bildschirmtastatur: Feld nach oben holen, damit es sichtbar bleibt
+    setTimeout(function () { try { $("pfName").scrollIntoView({ block: "start", behavior: "smooth" }); } catch (e) {} }, 300);
+  });
+  $("pfName").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("pfName").blur(); } });
+  $("pfAges").addEventListener("click", function (e) { var b = e.target.closest(".age"); if (!b) return; sfx.tap(); pfAge = +b.dataset.a; pfCheck(); });
+  $("pfCancel").onclick = function () { sfx.tap(); closeProfile(); };
+  $("pfOk").onclick = function () {
+    var name = $("pfName").value.trim().slice(0, 20);
+    if (!name || pfAge === null) return;
+    var isNew = !store.profile;
+    store.profile = { name: name, age: pfAge };
+    if (isNew && !hadOld) store.stufe = pfAge <= 10 ? 1 : 2;
+    save(); sfx.ok(); closeProfile(); renderHome();
+  };
+  $("hello").onclick = function () { sfx.tap(); openProfile(true); };
+
   // ── Übersicht ──
   function renderHome() {
+    $("hello").innerHTML = "Hallo " + esc(pname()) + "! 📚";
     var total = 0; for (var k in store.stars) total += store.stars[k];
     $("totalStars").textContent = total;
     showCoins();
@@ -563,7 +648,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
     var trophies = checkTrophies();
     var total = st.earned + bonus;
 
-    var titles = { 3: "Fantastisch, Vishva!", 2: "Gut gemacht!", 1: "Geschafft!" };
+    var titles = { 3: "Fantastisch, " + esc(pname()) + "!", 2: "Gut gemacht!", 1: "Geschafft!" };
     var texts = { 3: "Du hast alles beim ersten Versuch richtig verstanden.", 2: "Du hast den Text gut verstanden. Mit noch einmal Lesen schaffst du 3 Sterne!", 1: "Lies den Text nochmal in Ruhe – beim nächsten Mal klappt es noch besser." };
     var list = TEXTE.filter(function (t) { return t.stufe === cur.stufe; });
     var next = list[list.indexOf(cur) + 1] || TEXTE.filter(function (t) { return t.stufe === cur.stufe + 1; })[0];
@@ -734,6 +819,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   }
   window.addEventListener("hashchange", route);
   route();
+  if (!store.profile) openProfile(false);
 })();
 </script>
 </body>
