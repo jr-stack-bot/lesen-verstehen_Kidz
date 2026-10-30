@@ -166,8 +166,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .stage .av svg { height: 100%; max-width: 100%; border-radius: 18px; }
 .stage .tag { position: absolute; top: 28px; left: 28px; background: #8A55C2; color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 16px; font-weight: 900; display: none; }
 .stage .tag.on { display: block; }
-.trophies { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 12px; min-height: 40px; }
-.trophies span { font-size: 26px; width: 40px; height: 40px; display: grid; place-items: center; background: #FFF7D6; border-radius: 12px; }
+.trophies { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; margin-top: 10px; min-height: 34px; }
+.trophies span { font-size: 20px; width: 32px; height: 32px; display: grid; place-items: center; background: #FFF7D6; border-radius: 12px; }
 .trophies span.no { filter: grayscale(1); opacity: .25; background: #EEE7DA; }
 .shop { flex: 1; display: flex; flex-direction: column; background: var(--paper); border: 2px solid var(--line); border-radius: var(--radius); min-width: 0; overflow: hidden; }
 .slots { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 16px 10px; border-bottom: 2px solid var(--line); }
@@ -335,6 +335,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 <script src="content2.js"></script>
 <script src="content3.js"></script>
 <script src="content4.js"></script>
+<script src="content5.js"></script>
+<script src="content6.js"></script>
+<script src="content7.js"></script>
+<script src="content8.js"></script>
+<script src="content9.js"></script>
+<script src="content10.js"></script>
 <script src="avatar.js"></script>
 <script>
 (function () {
@@ -427,6 +433,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
     { id: "t75", icon: "🥇", name: "75 Texte gelesen", bonus: 150, test: function () { return doneCount() >= 75; } },
     { id: "s3", icon: "🟣", name: "Stufe 3 komplett", bonus: 160, test: function () { return stufeDone(3); } },
     { id: "p60", icon: "👑", name: "60 Texte perfekt", bonus: 200, test: function () { return perfCount() >= 60; } },
+    { id: "t100", icon: "📖", name: "100 Texte gelesen", bonus: 180, test: function () { return doneCount() >= 100; } },
+    { id: "p100", icon: "✨", name: "100 Texte perfekt", bonus: 250, test: function () { return perfCount() >= 100; } },
+    { id: "t150", icon: "🚀", name: "150 Texte gelesen", bonus: 220, test: function () { return doneCount() >= 150; } },
+    { id: "t200", icon: "💎", name: "200 Texte gelesen", bonus: 260, test: function () { return doneCount() >= 200; } },
+    { id: "p200", icon: "🌈", name: "200 Texte perfekt", bonus: 350, test: function () { return perfCount() >= 200; } },
+    { id: "t250", icon: "🦉", name: "250 Texte gelesen", bonus: 300, test: function () { return doneCount() >= 250; } },
     { id: "all", icon: "🏆", name: "Alle " + TEXTE.length + " Texte!", bonus: 300, test: function () { return doneCount() >= TEXTE.length; } }
   ];
   function checkTrophies() {
