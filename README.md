@@ -6,6 +6,14 @@ Lese-App für die 4. Klasse (Android, Web-App in einer WebView). Links steht der
 - **Münzen** für richtige Antworten, **Held-Shop** mit 84 Teilen zum Gestalten der eigenen Figur
 - **Pokale** und **Feuerwerk** bei einem perfekten Durchgang
 
+## Screenshots
+
+| | |
+|---|---|
+| ![Startseite](screenshots/01-start.png)<br>Startseite mit Stufen, Text-Kacheln und Sternen | ![Lesen](screenshots/02-lesen.png)<br>Richtige Antwort – die Textstelle wird grün markiert |
+| ![Hilfe](screenshots/03-hilfe.png)<br>Falsche Antwort – gelbe Hilfe-Markierung im Text | ![Antippen](screenshots/04-antippen.png)<br>Fragetyp „Wort im Text antippen“ |
+| ![Perfekt](screenshots/05-perfekt.png)<br>Feuerwerk und tanzender Held bei einem perfekten Text | ![Mein Held](screenshots/06-held.png)<br>„Mein Held“ – Kleidung anprobieren und kaufen |
+
 ## Eckdaten
 
 | | |
