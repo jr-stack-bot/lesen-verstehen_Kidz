@@ -466,6 +466,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   }
 
   // ── Figur ──
+  // Gratis = Preis 0 oder kostenloses Standardteil des Geschlechts (zeigt "gratis" statt "gekauft")
+  function isFree(id) { var it = A.BY[id]; return !it || it.price === 0 || genderDefaults()[it.slot] === id; }
   function owns(id) { var it = A.BY[id]; return !it || it.price === 0 || store.owned.indexOf(id) >= 0 || genderDefaults()[it.slot] === id; }
   function heroSvg(extraEq, opt) { var e = {}; for (var k in store.equip) e[k] = store.equip[k]; if (extraEq) for (var k2 in extraEq) e[k2] = extraEq[k2]; var o = {}; if (opt) for (var k3 in opt) o[k3] = opt[k3]; o.gender = gender(); return A.render(e, o); }
   function gender() { return store.profile && store.profile.gender === "maedchen" ? "maedchen" : "junge"; }
@@ -789,7 +791,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
       var ow = owns(it.id), eq = cu === it.id;
       var e = {}; e[heroSlot] = it.id;
       var noBg = heroSlot !== "hintergrund" && heroSlot !== "effekt";
-      var pr = ow ? '<div class="pr owned">' + (eq ? "an" : "gekauft") + "</div>" : '<div class="pr' + (store.coins < it.price ? " poor" : "") + '">' + COIN + it.price + "</div>";
+      var pr = ow ? '<div class="pr owned">' + (eq ? "an" : (isFree(it.id) ? "gratis" : "gekauft")) + "</div>" : '<div class="pr' + (store.coins < it.price ? " poor" : "") + '">' + COIN + it.price + "</div>";
       html += '<button class="tile' + (eq ? " eq" : "") + (sel === it.id ? " sel" : "") + (ow ? "" : " locked") + '" data-id="' + it.id + '"><div class="th">' + heroSvg(e, { viewBox: sd.view, noBg: noBg }) + '</div><div class="nm">' + esc(it.name) + "</div>" + pr + "</button>";
     });
     $("items").innerHTML = html;
@@ -806,7 +808,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
     } else {
       var it = A.BY[sel], ow = owns(sel);
       if (ow) {
-        bar.innerHTML = '<div class="what">' + esc(it.name) + "<small>" + (cu === sel ? "Trägst du gerade." : "Gehört dir schon.") + "</small></div>" +
+        bar.innerHTML = '<div class="what">' + esc(it.name) + "<small>" + (cu === sel ? "Trägst du gerade." : (isFree(sel) ? "Kostenlos – einfach anziehen." : "Gehört dir schon.")) + "</small></div>" +
           (cu === sel ? (slotDef(heroSlot).optional ? '<button class="btn light" id="actOff">Ablegen</button>' : '<button class="btn light" disabled>Trägst du</button>') : '<button class="btn" id="actEq">Anziehen</button>');
       } else if (store.coins >= it.price) {
         bar.innerHTML = '<div class="what">' + esc(it.name) + "<small>Gefällt es dir? Dann kauf es!</small></div>" + '<button class="btn gold" id="actBuy">Kaufen für ' + it.price + " " + COIN + "</button>";

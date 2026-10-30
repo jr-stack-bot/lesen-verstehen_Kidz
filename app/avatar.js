@@ -71,7 +71,7 @@
   add({ id: "fr_stacheln", slot: "haare", name: "Stachelkopf", price: 35, front: function (c) {
     return '<path d="M60,94 L60,66 L72,74 L74,48 L89,63 L100,36 L111,63 L126,48 L128,74 L140,66 L140,94 C134,78 118,70 100,70 C82,70 66,78 60,94Z" fill="' + c.hair + '" ' + O + "/>";
   } });
-  add({ id: "fr_lang", slot: "haare", name: "Lange Haare", price: 40,
+  add({ id: "fr_lang", slot: "haare", name: "Lange Haare", price: 0,
     back: function (c) { return '<path d="M58,92 C58,58 78,50 100,50 C122,50 142,58 142,92 L148,170 C130,180 70,180 52,170 Z" fill="' + c.hair + '" ' + O + "/>"; },
     front: function (c) { return '<path d="' + HAIR_TOP + '" fill="' + c.hair + '" ' + O + "/>"; } });
   add({ id: "fr_dutt", slot: "haare", name: "Dutt", price: 40, front: function (c) {
