@@ -3,18 +3,20 @@
 Lese-App für die 4. Klasse (Android, Web-App in einer WebView). Links steht der Text, rechts die Fragen dazu.
 
 - **300 Texte, 1940 Fragen** in **3 Stufen** (je 100 Texte) – alle Texte selbst geschrieben
-- **Profil beim ersten Start:** Name und Alter eingeben; die Start-Stufe richtet sich nach dem Alter (bis 10 → Stufe 1, 11–12 → Stufe 2). Profil ändern: auf die Überschrift „Hallo …!“ tippen
-- **Münzen** für richtige Antworten, **Held-Shop** mit 84 Teilen zum Gestalten der eigenen Figur
+- **Profil beim ersten Start:** Name, Alter und **Junge oder Mädchen** auswählen; die Start-Stufe richtet sich nach dem Alter (bis 10 → Stufe 1, 11–12 → Stufe 2). Profil ändern: auf die Überschrift „Hallo …!“ tippen
+- **Eigene Mädchen-Figur** (neu in 4.0): Standard mit langen Haaren und rosa Kleid; Jungen starten mit der bisherigen Figur
+- **Münzen** für richtige Antworten, **Held-Shop** mit **115 Teilen** (davon 101 zum Kaufen) zum Gestalten der eigenen Figur – alle Teile sind für alle Kinder kaufbar
+- **Neue Shop-Teile in 4.0:** Kleider (Sommerkleid, Jeansrock, Glitzerkleid, Prinzessinnenkleid), Ballerina-Tutu, Sari, Haarschmuck (Haarschleife, Haarreif, Katzenohren, Blumenkranz), Diadem, Handtasche, Blumenstrauß, Pony und neue Frisuren (Pferdeschwanz, Zwei Dutts, Lange Locken)
 - **19 Pokale** (neu u. a. für 100/150/200/250 gelesene und 100/200 perfekte Texte) und **Feuerwerk** bei einem perfekten Durchgang
 
 ## Screenshots
 
 | | |
 |---|---|
-| ![Profil](screenshots/00-profil.png)<br>Willkommen-Screen beim ersten Start – Name und Alter | ![Startseite](screenshots/01-start.png)<br>Startseite mit Stufen, Text-Kacheln und Sternen |
+| ![Profil](screenshots/00-profil.png)<br>Willkommen-Screen beim ersten Start – Name, Alter, Junge oder Mädchen | ![Startseite](screenshots/01-start.png)<br>Startseite mit Stufen, Text-Kacheln und Sternen |
 | ![Lesen](screenshots/02-lesen.png)<br>Richtige Antwort – die Textstelle wird grün markiert | ![Hilfe](screenshots/03-hilfe.png)<br>Falsche Antwort – gelbe Hilfe-Markierung im Text |
-| ![Antippen](screenshots/04-antippen.png)<br>Fragetyp „Wort im Text antippen“ | ![Perfekt](screenshots/05-perfekt.png)<br>Feuerwerk und tanzender Held bei einem perfekten Text |
-| ![Mein Held](screenshots/06-held.png)<br>„Mein Held“ – Kleidung anprobieren und kaufen, darunter die Pokale | |
+| ![Antippen](screenshots/04-antippen.png)<br>Fragetyp „Wort im Text antippen“ | ![Perfekt](screenshots/05-perfekt.png)<br>Feuerwerk und tanzende Heldin bei einem perfekten Text |
+| ![Mein Held](screenshots/06-held.png)<br>„Mein Held“ – ein Kleid anprobieren und kaufen, darunter die Pokale | ![Junge](screenshots/07-junge.png)<br>Held eines Jungen mit Fußballtrikot, Cap und Hund |
 
 ## Eckdaten
 
@@ -22,12 +24,12 @@ Lese-App für die 4. Klasse (Android, Web-App in einer WebView). Links steht der
 |---|---|
 | Zielgerät | Samsung Galaxy Tab S5e, Querformat |
 | Paketname | `de.vishwa.lesen` |
-| Version | 3.0 (versionCode 3) |
+| Version | 4.0 (versionCode 4) |
 
 ## Installation
 
 APK aus `apk/` aufs Tablet kopieren und installieren (Installation aus unbekannten Quellen erlauben).
-`Lesen-und-Verstehen-v3.apk` ist die aktuelle Version, `Lesen-und-Verstehen-v2.apk` und `Lesen-und-Verstehen.apk` sind ältere Stände.
+Aktuelle (und einzige) Version: `apk/Lesen-und-Verstehen-v4.apk`.
 
 **Wichtig:** Updates lassen sich nur über eine installierte Version spielen, wenn sie mit **demselben Signaturschlüssel** signiert sind. Der Schlüssel liegt bewusst **nicht** im Repo.
 
@@ -37,7 +39,7 @@ Der Fortschritt (Profil, Münzen, Pokale, Figur) liegt im `localStorage` auf dem
 
 - `app/` – Web-App (index.html, Texte in content*.js, Figur/Shop in avatar.js, Schriften)
 - `android/` – Apktool-Projekt (Manifest, smali, res)
-- `apk/` – fertige APKs
+- `apk/` – fertige APK (v4)
 - `build.sh` – Build-Skript
 
 ## Selbst bauen

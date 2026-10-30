@@ -16,6 +16,18 @@
   function heart(cx, cy, s, fill, extra) {
     return '<path transform="translate(' + cx + "," + cy + ") scale(" + s + ')" d="M0,4 C-6,-2 -12,4 -6,10 L0,16 L6,10 C12,4 6,-2 0,4Z" fill="' + fill + '" ' + (extra || "") + "/>";
   }
+  function flower(cx, cy, r, petal, mid) {
+    var s = "";
+    for (var k = 0; k < 5; k++) { var a = k * Math.PI * 2 / 5; s += '<circle cx="' + (cx + r * Math.sin(a)).toFixed(1) + '" cy="' + (cy - r * Math.cos(a)).toFixed(1) + '" r="' + (r * 0.75).toFixed(1) + '" fill="' + petal + '"/>'; }
+    return s + '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r * 0.6).toFixed(1) + '" fill="' + (mid || "#F2B705") + '"/>';
+  }
+  // Rock-/Kleid-Form: Trapez von der Taille (y=178) bis zum Saum B mit halber Saumbreite W; "from" schneidet oben ab (für Borten)
+  var SK_T = 178, SK_H = 36;
+  function skirtPath(B, W, from) {
+    from = from == null ? SK_T : from;
+    var hf = SK_H + (W - SK_H) * (from - SK_T) / (B - SK_T);
+    return "M" + (100 - hf).toFixed(1) + "," + from + " L" + (100 + hf).toFixed(1) + "," + from + " L" + (100 + W) + "," + B + " Q100," + (B + 8) + " " + (100 - W) + "," + B + " Z";
+  }
 
   var SLOTS = [
     { id: "haut", name: "Haut", icon: "🎨", optional: false, view: "50 45 100 100" },
@@ -77,6 +89,22 @@
   add({ id: "fr_wild", slot: "haare", name: "Wuschelkopf", price: 60, front: function (c) {
     return '<path d="M56,98 C48,80 54,62 64,58 C62,44 80,38 88,44 C92,32 112,32 116,44 C126,38 142,46 138,60 C150,66 152,84 144,98 C138,80 124,72 100,72 C78,72 62,80 56,98Z" fill="' + c.hair + '" ' + O + "/>";
   } });
+  add({ id: "fr_pferd", slot: "haare", name: "Pferdeschwanz", price: 35,
+    back: function (c) { return '<path d="M124,58 C156,50 170,92 160,132 C156,148 146,156 140,160 C148,140 150,116 142,96 C138,84 130,76 122,72 Z" fill="' + c.hair + '" ' + O + "/>"; },
+    front: function (c) { return '<path d="' + HAIR_TOP + '" fill="' + c.hair + '" ' + O + '/><ellipse cx="134" cy="62" rx="6" ry="8" transform="rotate(-30 134 62)" fill="#EC5FA8" ' + O + "/>"; } });
+  add({ id: "fr_zweidutts", slot: "haare", name: "Zwei Dutts", price: 45, front: function (c) {
+    return '<circle cx="68" cy="58" r="15" fill="' + c.hair + '" ' + O + '/><circle cx="132" cy="58" r="15" fill="' + c.hair + '" ' + O + '/><path d="M60,52 C66,48 72,50 74,56 M126,56 C128,50 134,48 140,52" stroke="' + shade(c.hair, 0.35) + '" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/><path d="' + HAIR_TOP + '" fill="' + c.hair + '" ' + O + "/>";
+  } });
+  add({ id: "fr_langlocken", slot: "haare", name: "Lange Locken", price: 55,
+    back: function (c) {
+      var s = '<path d="M58,92 C58,58 78,50 100,50 C122,50 142,58 142,92 L146,164 C128,174 72,174 54,164 Z" fill="' + c.hair + '" ' + O + "/>";
+      [[54, 100], [50, 118], [54, 136], [50, 154], [60, 168], [146, 100], [150, 118], [146, 136], [150, 154], [140, 168], [76, 172], [100, 174], [124, 172]].forEach(function (k) { s += '<circle cx="' + k[0] + '" cy="' + k[1] + '" r="11" fill="' + c.hair + '" ' + O + "/>"; });
+      return s + '<path d="M58,92 C58,58 78,50 100,50 C122,50 142,58 142,92 L146,164 C128,172 72,172 54,164 Z" fill="' + c.hair + '"/>';
+    },
+    front: function (c) {
+      return '<path d="' + HAIR_TOP + '" fill="' + c.hair + '" ' + O + '/>' + [[62, 88, 8], [138, 88, 8], [70, 72, 9], [130, 72, 9]].map(function (k) { return '<circle cx="' + k[0] + '" cy="' + k[1] + '" r="' + k[2] + '" fill="' + c.hair + '" ' + O + "/>"; }).join("") +
+        '<path d="M80,60 C86,56 92,58 94,62 M106,58 C110,54 118,56 120,60" stroke="' + shade(c.hair, 0.35) + '" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6"/>';
+    } });
 
   // Kleidung
   function outfit(id, name, price, o) { o.id = id; o.slot = "outfit"; o.name = name; o.price = price; add(o); }
@@ -108,6 +136,54 @@
   outfit("kl_koenig", "Königsmantel", 300, { shirt: "#8A2BB0", sleeve: "long", pants: "#5C1C78", shoes: "#F2B705",
     extra: function () { return '<rect x="64" y="136" width="72" height="12" fill="#FFFFFF"/><g fill="#1F1A1C"><circle cx="74" cy="142" r="1.8"/><circle cx="88" cy="142" r="1.8"/><circle cx="102" cy="142" r="1.8"/><circle cx="116" cy="142" r="1.8"/><circle cx="128" cy="142" r="1.8"/></g><rect x="96" y="148" width="8" height="56" fill="#F2B705"/>'; } });
 
+  // Kleider & Röcke (dress:true → Rock statt Hose; skirtB = Saum-y, skirtW = halbe Saumbreite)
+  function waist(col) { return '<rect x="64" y="176" width="72" height="9" rx="3" fill="' + col + '" ' + O + "/>"; }
+  outfit("kl_kleid", "Kleid", 0, { dress: true, shirt: "#F48FB1", skirt: "#F48FB1", sleeve: "short", shoes: "#C2185B",
+    extra: function () {
+      return '<path d="M86,137 C86,148 98,148 99,138 Z M114,137 C114,148 102,148 101,138 Z" fill="#FFFFFF" ' + O + "/>" + waist("#E0628F") +
+        '<path d="M100,180 L90,174 L90,187 Z M100,180 L110,174 L110,187 Z" fill="#FFFFFF" ' + O + '/><circle cx="100" cy="180" r="3" fill="#FFFFFF" ' + O + "/>";
+    } });
+  outfit("kl_sommerkleid", "Sommerkleid", 40, { dress: true, shirt: "#FFD54F", skirt: "#FFD54F", sleeve: "none", shoes: "#C68E5E",
+    extra: function () {
+      return '<path d="M74,136 L74,142 M126,136 L126,142" stroke="#E8B923" stroke-width="5" stroke-linecap="round"/>' + waist("#F2A900") +
+        flower(84, 158, 4, "#FFFFFF", "#F28C28") + flower(116, 166, 4, "#FFFFFF", "#F28C28") + flower(70, 206, 5, "#FFFFFF", "#EC5FA8") + flower(100, 214, 5, "#FFFFFF", "#F28C28") + flower(130, 202, 5, "#FFFFFF", "#EC5FA8") + flower(88, 194, 3.5, "#FFFFFF", "#2F7FC1") + flower(116, 192, 3.5, "#FFFFFF", "#2F7FC1");
+    } });
+  outfit("kl_jeansrock", "Jeansrock & Shirt", 60, { dress: true, shirt: "#C9B6F2", skirt: "#4A6FA5", skirtB: 218, skirtW: 48, sleeve: "short", shoes: "#FFFFFF",
+    extra: function () {
+      return heart(100, 148, 1.3, "#EC5FA8") + '<rect x="64" y="178" width="72" height="8" fill="#3F5F91" ' + O + '/>' +
+        '<path d="M55,212 Q100,220 145,212" fill="none" stroke="#F2C76E" stroke-width="1.5" stroke-dasharray="3 3"/>' +
+        '<path d="M100,186 L100,220" stroke="#F2C76E" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="100" cy="182" r="3" fill="#C9A227"/>';
+    } });
+  outfit("kl_tutu", "Ballerina-Tutu", 90, { dress: true, shirt: "#F7B6C8", sleeve: "none", shoes: "#F7B6C8",
+    skirtFn: function () {
+      var sc = function (y, w, col, op) { return '<path d="M66,178 L134,178 L' + (100 + w) + "," + y + " " + revScallop(y, w, 8) + 'Z" fill="' + col + '" opacity="' + op + '" ' + O + "/>"; };
+      return sc(212, 64, "#FBD3E0", 1) + sc(204, 56, "#F7B6C8", 0.95) + '<path d="M70,190 L80,200 M90,186 L94,204 M110,186 L106,204 M130,190 L120,200" stroke="#FFFFFF" stroke-width="1.5" opacity=".7"/>';
+    },
+    extra: function () { return waist("#EC8FB0") + star(100, 160, 6, "#FFFFFF", 'opacity=".9"') + '<path d="M84,236 L90,226 M116,236 L110,226" stroke="#EC8FB0" stroke-width="2"/>'; } });
+  function revScallop(y, w, n) { var d = "", step = (2 * w) / n, x = 100 + w; for (var i = 0; i < n; i++) { d += "Q" + (x - step / 2).toFixed(1) + "," + (y + 10) + " " + (x - step).toFixed(1) + "," + y + " "; x -= step; } return d; }
+  outfit("kl_sari", "Sari", 120, { dress: true, shirt: "#1E7A4C", skirt: "#C2185B", skirtB: 238, skirtW: 54, hem: "#F2B705", sleeve: "short", sleeveColor: "#1E7A4C", shoes: "#B88A00",
+    back: function () { return '<path d="M62,140 L48,210 L66,212 L74,146 Z" fill="#C2185B" ' + O + '/><path d="M48,210 L66,212 L65,204 L49,202 Z" fill="#F2B705"/>'; },
+    extra: function () {
+      return '<path d="M94,190 L92,238 M100,190 L100,240 M106,190 L108,238" stroke="#9A1048" stroke-width="2" opacity=".7"/>' +
+        '<path d="M64,140 L82,136 L136,178 L136,192 L118,192 Z" fill="#C2185B" ' + O + "/>" +
+        '<path d="M64,140 L82,136 L86,139 L68,144 Z M118,192 L136,192 L136,186 L122,186 Z" fill="#F2B705"/><path d="M82,136 L136,178" stroke="#F2B705" stroke-width="4"/>' +
+        '<g fill="#F2B705"><circle cx="96" cy="160" r="1.8"/><circle cx="108" cy="170" r="1.8"/><circle cx="118" cy="178" r="1.8"/><circle cx="84" cy="150" r="1.8"/></g>';
+    } });
+  outfit("kl_glitzer", "Glitzerkleid", 150, { dress: true, shirt: "#7E57C2", skirt: "#7E57C2", sleeve: "short", sleeveColor: "#9575CD", shoes: "#C9CED6",
+    extra: function () {
+      return waist("#C9CED6") + star(86, 156, 5, "#FFE27A") + star(114, 150, 4, "#FFFFFF") + star(106, 170, 3.5, "#FFE27A") +
+        '<g class="av-twinkle">' + star(74, 206, 6, "#FFE27A") + star(124, 214, 5, "#FFFFFF") + star(98, 200, 4, "#FFFFFF") + "</g>" + star(110, 222, 4.5, "#FFE27A") + star(84, 222, 3.5, "#FFFFFF") + star(136, 198, 3.5, "#FFE27A") +
+        '<circle cx="62" cy="214" r="1.5" fill="#fff"/><circle cx="92" cy="186" r="1.5" fill="#fff"/><circle cx="140" cy="218" r="1.5" fill="#fff"/>';
+    } });
+  outfit("kl_prinzessin", "Prinzessinnenkleid", 280, { dress: true, shirt: "#F3A6D8", skirt: "#F3A6D8", skirtB: 240, skirtW: 62, hem: "#FBD3EE", sleeve: "short", shoes: "#F2B705",
+    extra: function () {
+      return '<path d="M100,186 L84,240 Q100,244 116,240 Z" fill="#FBD3EE" opacity=".9"/>' +
+        '<ellipse cx="56" cy="148" rx="13" ry="11" fill="#F7C1E4" ' + O + '/><ellipse cx="144" cy="148" rx="13" ry="11" fill="#F7C1E4" ' + O + "/>" +
+        '<path d="M86,137 Q100,150 114,137" stroke="#FBD3EE" stroke-width="4" fill="none"/>' +
+        '<rect x="64" y="175" width="72" height="10" rx="3" fill="#F2B705" stroke="#B88A00" stroke-width="2"/><circle cx="100" cy="180" r="5" fill="#E3384F" stroke="#B88A00" stroke-width="1.5"/>' +
+        heart(68, 214, 0.5, "#E0628F") + heart(132, 216, 0.5, "#E0628F") + heart(76, 232, 0.45, "#E0628F") + heart(124, 232, 0.45, "#E0628F");
+    } });
+
   // Hüte
   function hat(id, name, price, fn) { add({ id: id, slot: "kopf", name: name, price: price, front: fn }); }
   hat("h_cap", "Basecap", 30, function () { return '<path d="M58,88 C58,58 78,48 100,48 C122,48 142,58 142,88 Z" fill="#D9473C" ' + O + '/><path d="M98,84 L166,86 C166,95 150,98 100,92 Z" fill="#B2342B" ' + O + '/><circle cx="100" cy="48" r="4" fill="#B2342B"/>'; });
@@ -120,6 +196,22 @@
   hat("h_helm", "Astronautenhelm", 200, function (c) { return '<circle cx="100" cy="95" r="54" fill="rgba(170,215,255,.28)" stroke="#E8EEF5" stroke-width="7"/><path d="M68,70 C76,56 90,50 104,50" stroke="#fff" stroke-width="5" fill="none" opacity=".8" stroke-linecap="round"/>'; });
   hat("h_krone", "Krone", 300, function () { return '<polygon points="66,72 66,42 82,58 100,32 118,58 134,42 134,72" fill="#F2B705" stroke="#B88A00" stroke-width="2.5" stroke-linejoin="round"/><circle cx="100" cy="62" r="5" fill="#D9473C"/><circle cx="80" cy="64" r="3.5" fill="#2F7FC1"/><circle cx="120" cy="64" r="3.5" fill="#2EAD5B"/><circle cx="100" cy="32" r="3" fill="#fff"/><circle cx="66" cy="42" r="3" fill="#fff"/><circle cx="134" cy="42" r="3" fill="#fff"/>'; });
   hat("h_hasenohren", "Hasenohren", 60, function () { return '<ellipse cx="82" cy="34" rx="10" ry="26" fill="#F4EEE3" ' + O + '/><ellipse cx="118" cy="34" rx="10" ry="26" fill="#F4EEE3" ' + O + '/><ellipse cx="82" cy="36" rx="5" ry="18" fill="#F7B6C8"/><ellipse cx="118" cy="36" rx="5" ry="18" fill="#F7B6C8"/><path d="M62,66 C70,52 130,52 138,66" stroke="#F4EEE3" stroke-width="6" fill="none"/>'; });
+
+  var BAND = "M62,86 C62,46 138,46 138,86";
+  hat("h_schleife", "Haarschleife", 25, function () { return '<g transform="rotate(-18 74 60)"><path d="M74,60 L54,48 L56,74 Z M74,60 L94,48 L92,74 Z" fill="#EC5FA8" ' + O + '/><path d="M60,54 L66,62 M88,54 L82,62" stroke="#C2407F" stroke-width="2" stroke-linecap="round"/><circle cx="74" cy="60" r="6" fill="#D94A93" ' + O + "/></g>"; });
+  hat("h_haarreif", "Haarreif", 30, function () { return '<path d="' + BAND + '" stroke="rgba(0,0,0,.22)" stroke-width="9" fill="none" stroke-linecap="round"/><path d="' + BAND + '" stroke="#2F9FD8" stroke-width="6" fill="none" stroke-linecap="round"/>' + '<circle cx="62" cy="86" r="4" fill="#2F9FD8" ' + O + '/><circle cx="138" cy="86" r="4" fill="#2F9FD8" ' + O + '/>'; });
+  hat("h_katzenohren", "Katzenohren-Haarreif", 60, function () { return '<path d="M68,62 L72,34 L92,52 Z M132,62 L128,34 L108,52 Z" fill="#2B2B33" ' + O + '/><path d="M74,54 L75.5,42 L85,51 Z M126,54 L124.5,42 L115,51 Z" fill="#F7B6C8"/><path d="' + BAND + '" stroke="#2B2B33" stroke-width="6" fill="none" stroke-linecap="round"/>'; });
+  hat("h_blumenkranz", "Blumenkranz", 70, function () {
+    var s = '<path d="' + BAND + '" stroke="#3E9B5F" stroke-width="5" fill="none" stroke-linecap="round"/>';
+    [[68, 66, -30], [104, 52, 10], [128, 62, 40], [86, 54, -10]].forEach(function (l) { s += '<ellipse cx="' + l[0] + '" cy="' + l[1] + '" rx="7" ry="3.5" transform="rotate(' + l[2] + " " + l[0] + " " + l[1] + ')" fill="#5DBB63"/>'; });
+    [[64, 76, "#EC5FA8"], [74, 60, "#FFFFFF"], [92, 52, "#F2B705"], [112, 52, "#EC5FA8"], [127, 60, "#8A4FD0"], [136, 76, "#FFFFFF"]].forEach(function (f) { s += flower(f[0], f[1], 5, f[2], f[2] === "#F2B705" ? "#F28C28" : "#F2B705"); });
+    return s;
+  });
+  hat("h_diadem", "Diadem", 200, function () {
+    return '<path d="M70,66 C80,58 120,58 130,66 L124,54 L114,58 L100,38 L86,58 L76,54 Z" fill="#F2B705" stroke="#B88A00" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<path d="M100,46 L105,54 L100,60 L95,54 Z" fill="#7FD3F0" stroke="#3E9BC2" stroke-width="1"/><circle cx="80" cy="60" r="2.5" fill="#EC5FA8"/><circle cx="120" cy="60" r="2.5" fill="#EC5FA8"/><circle cx="76" cy="53" r="2" fill="#fff"/><circle cx="124" cy="53" r="2" fill="#fff"/><circle cx="100" cy="38" r="2.2" fill="#fff"/>' +
+      '<g class="av-twinkle">' + star(112, 44, 4, "#FFFFFF") + "</g>";
+  });
 
   // Brillen
   function glasses(id, name, price, fn) { add({ id: id, slot: "brille", name: name, price: price, front: fn }); }
@@ -165,6 +257,13 @@
   hold("i_pokal", "Pokal", 200, function () { return '<path d="M138,170 L170,170 L166,194 C164,202 144,202 142,194 Z" fill="#F2B705" stroke="#B88A00" stroke-width="2"/><path d="M138,174 C126,174 128,190 141,190 M170,174 C182,174 180,190 167,190" stroke="#F2B705" stroke-width="4" fill="none"/><rect x="150" y="200" width="8" height="10" fill="#F2B705"/><rect x="142" y="208" width="24" height="7" rx="2" fill="#B88A00"/>' + star(154, 184, 6, "#fff"); });
   hold("i_fackel", "Fackel", 90, function () { return '<rect x="142" y="160" width="8" height="52" rx="3" fill="#8A5A2B" transform="rotate(10 146 186)"/><path class="av-flame" d="M140,162 C134,146 146,134 150,124 C154,138 164,146 156,162Z" fill="#FF9F1C"/><path d="M144,160 C142,150 148,146 150,138 C152,148 156,152 152,160Z" fill="#FFE27A"/>'; });
 
+  hold("i_tasche", "Handtasche", 40, function () { return '<path d="M138,212 C138,196 156,196 156,212" stroke="#C2407F" stroke-width="3.5" fill="none"/><path d="M130,212 L164,212 L160,236 C160,240 134,240 134,236 Z" fill="#EC5FA8" ' + O + '/><path d="M131,212 L163,212 L161,222 C150,226 144,226 133,222 Z" fill="#D94A93"/><circle cx="147" cy="222" r="3.5" fill="#F2B705" ' + O + "/>"; });
+  hold("i_strauss", "Blumenstrauß", 50, function () {
+    return '<path d="M144,200 L140,176 M146,200 L150,170 M148,200 L160,178" stroke="#3E8E44" stroke-width="2.5"/><ellipse cx="136" cy="182" rx="7" ry="3.5" transform="rotate(-40 136 182)" fill="#5DBB63"/><ellipse cx="160" cy="186" rx="7" ry="3.5" transform="rotate(40 160 186)" fill="#5DBB63"/>' +
+      flower(140, 172, 6, "#E3384F") + flower(156, 168, 6, "#EC5FA8") + flower(150, 156, 6, "#FFFFFF") + flower(164, 178, 5, "#8A4FD0") + flower(132, 162, 5, "#F2B705", "#F28C28") +
+      '<path d="M132,192 L160,192 L150,214 L142,214 Z" fill="#FFF3D6" ' + O + '/><path d="M138,200 L154,200" stroke="#EC5FA8" stroke-width="3"/>';
+  });
+
   // Haustiere
   function pet(id, name, price, fn) { add({ id: id, slot: "tier", name: name, price: price, front: fn }); }
   pet("t_katze", "Katze", 80, function () { return '<g class="av-bob"><path d="M48,236 C62,236 64,216 56,208" stroke="#F28C28" stroke-width="6" fill="none" stroke-linecap="round"/><ellipse cx="32" cy="236" rx="20" ry="14" fill="#F28C28" ' + O + '/><circle cx="20" cy="218" r="13" fill="#F28C28" ' + O + '/><path d="M10,212 L10,198 L20,208Z M30,212 L30,198 L20,208Z" fill="#F28C28" ' + O + '/><circle cx="15" cy="217" r="2.2" fill="#1F1A1C"/><circle cx="25" cy="217" r="2.2" fill="#1F1A1C"/><path d="M18,223 Q20,225 22,223" stroke="#1F1A1C" stroke-width="1.5" fill="none"/><path d="M22,236 L22,248 M40,238 L40,248" stroke="#D9761A" stroke-width="5" stroke-linecap="round"/></g>'; });
@@ -175,6 +274,15 @@
   pet("t_roboter", "Mini-Roboter", 200, function () { return '<g class="av-bob"><line x1="28" y1="200" x2="28" y2="190" stroke="#5E6672" stroke-width="2.5"/><circle cx="28" cy="188" r="3.5" fill="#E3384F" class="av-blink-light"/><rect x="14" y="200" width="28" height="22" rx="6" fill="#AEB6C0" ' + O + '/><rect x="18" y="205" width="20" height="10" rx="4" fill="#1F2A3A"/><circle cx="23" cy="210" r="2.2" fill="#7FF3FF"/><circle cx="33" cy="210" r="2.2" fill="#7FF3FF"/><rect x="12" y="224" width="32" height="20" rx="5" fill="#8C96A3" ' + O + '/><circle cx="20" cy="248" r="5" fill="#2B2B33"/><circle cx="36" cy="248" r="5" fill="#2B2B33"/></g>'; });
   pet("t_einhorn", "Einhorn", 260, function () { return '<g class="av-bob"><ellipse cx="34" cy="232" rx="22" ry="13" fill="#FFFFFF" ' + O + '/><path d="M14,226 C10,214 14,204 22,200 L30,214 Z" fill="#FFFFFF" ' + O + '/><circle cx="16" cy="206" r="10" fill="#FFFFFF" ' + O + '/><path d="M14,196 L18,178 L22,196Z" fill="#F2B705" ' + O + '/><path d="M24,200 C30,202 34,210 30,218 M26,198 C34,198 38,206 36,214" stroke="#EC5FA8" stroke-width="4" fill="none"/><path d="M56,226 C66,224 66,238 58,240" stroke="#8A4FD0" stroke-width="5" fill="none"/><circle cx="13" cy="205" r="2" fill="#1F1A1C"/><path d="M22,240 L22,250 M44,240 L44,250" stroke="#E0E4EA" stroke-width="5" stroke-linecap="round"/></g>'; });
   pet("t_drache", "Baby-Drache", 300, function () { return '<g class="av-bob"><path d="M30,214 L6,196 L12,214 L2,220 L26,226Z" fill="#7B3FC4" ' + O + ' class="av-flap"/><ellipse cx="34" cy="234" rx="19" ry="14" fill="#5DBB63" ' + O + '/><path d="M52,236 C64,236 64,226 60,222" stroke="#5DBB63" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="22" cy="214" r="12" fill="#5DBB63" ' + O + '/><path d="M16,204 L14,196 L20,202 M26,203 L28,195 L30,204" stroke="#F2B705" stroke-width="3"/><circle cx="18" cy="212" r="2.2" fill="#1F1A1C"/><circle cx="27" cy="212" r="2.2" fill="#1F1A1C"/><ellipse cx="34" cy="238" rx="10" ry="7" fill="#D7F0C4"/><path d="M8,222 C2,220 0,226 4,228" stroke="#FF9F1C" stroke-width="3" fill="none" class="av-flame"/></g>'; });
+
+  pet("t_pony", "Pony", 180, function () {
+    return '<g class="av-bob"><path d="M60,220 C74,222 74,240 66,250 C66,238 62,232 58,230 Z" fill="#8A5A2B" ' + O + '/>' +
+      [22, 32, 48, 58].map(function (x) { return '<rect x="' + (x - 3.5) + '" y="228" width="7" height="22" rx="3" fill="#D9A877" ' + O + '/><rect x="' + (x - 3.5) + '" y="246" width="7" height="6" rx="1.5" fill="#5A3E2B"/>'; }).join("") +
+      '<ellipse cx="40" cy="226" rx="24" ry="13" fill="#E3B88A" ' + O + '/><path d="M18,224 C14,212 14,202 18,194 L32,200 C30,208 30,216 34,222 Z" fill="#E3B88A" ' + O + '/>' +
+      '<ellipse cx="16" cy="200" rx="9" ry="13" transform="rotate(40 16 200)" fill="#E3B88A" ' + O + '/><ellipse cx="9" cy="208" rx="7" ry="6" fill="#F2D3B0" ' + O + '/>' +
+      '<path d="M18,188 L20,178 L25,189 Z" fill="#E3B88A" ' + O + '/><path d="M19,188 C30,186 36,198 34,222 C30,214 26,204 22,198 Z" fill="#8A5A2B" ' + O + '/><path d="M14,192 C16,186 22,186 24,190 C20,192 16,194 14,196 Z" fill="#8A5A2B"/>' +
+      '<circle cx="17" cy="198" r="2.2" fill="#1F1A1C"/><circle cx="6" cy="208" r="1.2" fill="#8A5A2B"/><circle cx="11" cy="209" r="1.2" fill="#8A5A2B"/>' + heart(44, 214, 0.5, "#EC5FA8") + "</g>";
+  });
 
   // Orte (Hintergründe)
   function bg(id, name, price, fn) { add({ id: id, slot: "hintergrund", name: name, price: price, bg: fn }); }
@@ -201,11 +309,18 @@
 
   var BY = {}; I.forEach(function (it) { BY[it.id] = it; });
   var DEFAULT = { haut: "haut3", haare: "fr_kurz", haarfarbe: "hf_schwarz", outfit: "kl_blau", hintergrund: "o_zimmer", hand: "i_buch" };
+  // Grundfigur je nach Geschlecht ("junge" = DEFAULT, "maedchen" = lange Haare + Kleid)
+  function defaultsFor(gender) {
+    var d = {}; for (var k in DEFAULT) d[k] = DEFAULT[k];
+    if (gender === "maedchen") { d.haare = "fr_lang"; d.outfit = "kl_kleid"; }
+    return d;
+  }
 
   var uidc = 0;
   function render(eq, opt) {
     opt = opt || {};
-    var e = {}; for (var k in DEFAULT) e[k] = DEFAULT[k]; for (var k2 in eq) e[k2] = eq[k2];
+    var girl = opt.gender === "maedchen";
+    var e = defaultsFor(opt.gender); for (var k2 in eq) e[k2] = eq[k2];
     function it(slot) { return e[slot] ? BY[e[slot]] : null; }
     var c = { skin: (it("haut") || BY.haut3).color, hair: (it("haarfarbe") || BY.hf_schwarz).color, uid: "a" + (++uidc) };
     var skinD = shade(c.skin, -0.18);
@@ -221,27 +336,39 @@
     // Beine
     var legTop = 198;
     s.push('<rect x="73" y="' + legTop + '" width="24" height="46" rx="8" fill="' + c.skin + '" ' + O + '/><rect x="103" y="' + legTop + '" width="24" height="46" rx="8" fill="' + c.skin + '" ' + O + "/>");
-    if (of.shorts) {
+    if (of.dress) {
+      // Kleid/Rock: Beine bleiben sichtbar, Rock folgt nach den Schuhen
+    } else if (of.shorts) {
       s.push('<rect x="70" y="196" width="60" height="24" rx="6" fill="' + of.pants + '" ' + O + "/>");
       if (of.socks) s.push('<rect x="73" y="226" width="24" height="16" fill="' + of.socks + '"/><rect x="103" y="226" width="24" height="16" fill="' + of.socks + '"/>');
     } else {
       s.push('<rect x="71" y="196" width="28" height="46" rx="7" fill="' + of.pants + '" ' + O + '/><rect x="101" y="196" width="28" height="46" rx="7" fill="' + of.pants + '" ' + O + "/>");
     }
     s.push('<ellipse cx="84" cy="245" rx="16" ry="8" fill="' + of.shoes + '" ' + O + '/><ellipse cx="116" cy="245" rx="16" ry="8" fill="' + of.shoes + '" ' + O + "/>");
+    if (of.dress) {
+      if (of.skirtFn) s.push(of.skirtFn(c));
+      else {
+        var sB = of.skirtB || 224, sW = of.skirtW || 52;
+        s.push('<path d="' + skirtPath(sB, sW) + '" fill="' + (of.skirt || of.shirt) + '" ' + O + "/>");
+        if (of.hem) s.push('<path d="' + skirtPath(sB, sW, sB - 8) + '" fill="' + of.hem + '"/><path d="' + skirtPath(sB, sW) + '" fill="none" ' + O + "/>");
+      }
+    }
     // Arme
-    var sl = of.sleeveColor || of.shirt, slH = of.sleeve === "long" ? 54 : 22;
-    s.push('<g class="av-armL"><rect x="46" y="142" width="20" height="58" rx="10" fill="' + c.skin + '" ' + O + '/><rect x="46" y="142" width="20" height="' + slH + '" rx="10" fill="' + sl + '" ' + O + '/><circle cx="56" cy="201" r="10" fill="' + c.skin + '" ' + O + "/></g>");
-    s.push('<rect x="134" y="142" width="20" height="58" rx="10" fill="' + c.skin + '" ' + O + '/><rect x="134" y="142" width="20" height="' + slH + '" rx="10" fill="' + sl + '" ' + O + "/>");
+    var sl = of.sleeveColor || of.shirt, slH = of.sleeve === "long" ? 54 : of.sleeve === "none" ? 0 : 22;
+    var slv = function (x) { return slH ? '<rect x="' + x + '" y="142" width="20" height="' + slH + '" rx="10" fill="' + sl + '" ' + O + "/>" : ""; };
+    s.push('<g class="av-armL"><rect x="46" y="142" width="20" height="58" rx="10" fill="' + c.skin + '" ' + O + "/>" + slv(46) + '<circle cx="56" cy="201" r="10" fill="' + c.skin + '" ' + O + "/></g>");
+    s.push('<rect x="134" y="142" width="20" height="58" rx="10" fill="' + c.skin + '" ' + O + "/>" + slv(134));
     // Hals + Körper
     s.push('<rect x="91" y="122" width="18" height="20" fill="' + skinD + '"/>');
-    s.push('<rect x="64" y="136" width="72" height="' + (of.long ? 82 : 68) + '" rx="16" fill="' + of.shirt + '" ' + O + "/>");
+    s.push('<rect x="64" y="136" width="72" height="' + (of.dress ? 50 : of.long ? 82 : 68) + '" rx="16" fill="' + of.shirt + '" ' + O + "/>");
     if (of.extra) s.push(of.extra(c));
     if (rk && rk.front) s.push(rk.front(c));
     // Kopf
     s.push('<g class="av-head"><circle cx="60" cy="99" r="8" fill="' + c.skin + '" ' + O + '/><circle cx="140" cy="99" r="8" fill="' + c.skin + '" ' + O + '/><circle cx="100" cy="95" r="40" fill="' + c.skin + '" ' + O + "/>");
     s.push('<circle cx="76" cy="110" r="6" fill="#F28B82" opacity=".45"/><circle cx="124" cy="110" r="6" fill="#F28B82" opacity=".45"/>');
     s.push('<path d="M77,82 Q85,77 93,82 M107,82 Q115,77 123,82" stroke="' + shade(c.hair, -0.1) + '" stroke-width="3" fill="none" stroke-linecap="round"/>');
-    s.push('<g class="av-eyes"><ellipse cx="85" cy="96" rx="7.5" ry="8.5" fill="#fff"/><ellipse cx="115" cy="96" rx="7.5" ry="8.5" fill="#fff"/><circle cx="86" cy="97" r="4.6" fill="#2B1E1A"/><circle cx="116" cy="97" r="4.6" fill="#2B1E1A"/><circle cx="87.5" cy="95" r="1.6" fill="#fff"/><circle cx="117.5" cy="95" r="1.6" fill="#fff"/></g>');
+    s.push('<g class="av-eyes"><ellipse cx="85" cy="96" rx="7.5" ry="8.5" fill="#fff"/><ellipse cx="115" cy="96" rx="7.5" ry="8.5" fill="#fff"/><circle cx="86" cy="97" r="4.6" fill="#2B1E1A"/><circle cx="116" cy="97" r="4.6" fill="#2B1E1A"/><circle cx="87.5" cy="95" r="1.6" fill="#fff"/><circle cx="117.5" cy="95" r="1.6" fill="#fff"/>' +
+      (girl ? '<path d="M78.5,90.5 L73.5,87 M80.5,88.2 L77,84 M121.5,90.5 L126.5,87 M119.5,88.2 L123,84" stroke="#2B1E1A" stroke-width="2" stroke-linecap="round"/>' : "") + "</g>");
     s.push('<path d="M88,111 Q100,125 112,111 Z" fill="#7A2E2E"/><path d="M93,117 Q100,121 107,117" stroke="#E87C7C" stroke-width="3" fill="none" stroke-linecap="round"/>');
     s.push(hr.front(c));
     var br = it("brille"); if (br) s.push(br.front(c));
@@ -256,5 +383,5 @@
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + vb + '" class="avatar ' + (opt.cls || "") + '" preserveAspectRatio="xMidYMid meet">' + s.join("") + "</svg>";
   }
 
-  window.AVATAR = { SLOTS: SLOTS, ITEMS: I, BY: BY, DEFAULT: DEFAULT, render: render };
+  window.AVATAR = { SLOTS: SLOTS, ITEMS: I, BY: BY, DEFAULT: DEFAULT, defaultsFor: defaultsFor, render: render };
 })();
