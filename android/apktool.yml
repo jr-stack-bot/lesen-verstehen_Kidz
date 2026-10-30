@@ -1,0 +1,24 @@
+!!brut.androlib.meta.MetaInfo
+apkFileName: lesen.apk
+compressionType: false
+doNotCompress:
+- arsc
+- png
+- woff2
+isFrameworkApk: false
+packageInfo:
+  forcedPackageId: '127'
+  renameManifestPackage: null
+sdkInfo:
+  minSdkVersion: '21'
+  targetSdkVersion: '29'
+sharedLibrary: false
+sparseResources: false
+usesFramework:
+  ids:
+  - 1
+  tag: null
+version: 2.11.1
+versionInfo:
+  versionCode: '2'
+  versionName: '2.0'
