@@ -1,5 +1,5 @@
 // Lesen & Verstehen – @ Joschy
-// Lesetexte für Vishwa – alle Texte selbst geschrieben, Niveau 4. Klasse.
+// Lesetexte für Vishva – alle Texte selbst geschrieben, Niveau 4. Klasse.
 // Fragetypen: yn = Ja/Nein, mc = Multiple Choice, tap = Wort im Text antippen.
 // h = Textstelle, die bei einer falschen Antwort markiert wird (muss genau so im Text stehen).
 window.TEXTE = [
