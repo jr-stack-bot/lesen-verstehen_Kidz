@@ -1,5 +1,17 @@
 # Lesen & Verstehen
 
+## 📥 Download
+
+**[📥 APK herunterladen (Version 5.0)](https://github.com/jr-stack-bot/lesen-verstehen_Kidz/raw/main/apk/Lesen-und-Verstehen-v5.0.apk)**
+
+So installierst du die App auf dem Android-Tablet:
+
+1. Die heruntergeladene Datei `Lesen-und-Verstehen-v5.0.apk` auf dem Tablet öffnen.
+2. Wenn Android nachfragt, **„Aus dieser Quelle installieren“** erlauben.
+3. Auf **„Installieren“** tippen – fertig.
+
+**Update:** Die neue Version einfach über die alte installieren – der Spielstand bleibt erhalten.
+
 Lese-App für Vishva und andere Kinder der 4. Klasse (Android, Web-App in einer WebView). Im Querformat steht links der Text und rechts die Fragen dazu, im Hochformat steht der Text oben und die Fragen darunter.
 
 - **Neu in 5.0:** läuft auf **anderen Tablets** und in **Hoch- und Querformat**; Einstellung **„Anzeige“** (⚙️) für Größe und Aufteilung, siehe unten
